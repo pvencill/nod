@@ -1,0 +1,13 @@
+{   "name": "nod"
+  , "description": "A CanCan-inspired resource authorization module"
+  , "version": "0.0.1"
+  , "author": "Paul Vencill <paul@cyberstride.net>"
+  , "dependencies": {
+  }
+  , "devDependencies": {
+  }
+  , "keywords": ["node", "node.js", "access control", "resource"]
+  , "main": "index"
+  , "engines": { "node": ">= 0.4.7" }
+}
+
