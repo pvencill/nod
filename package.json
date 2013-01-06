@@ -4,7 +4,7 @@
   "description": "A simple, persistence-agnostic authorization system for node.js",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "mocha test -r should -R spec"
   },
   "repository": {
     "type": "git",
@@ -17,5 +17,12 @@
     "control"
   ],
   "author": "Paul Vencill",
-  "license": "BSD"
+  "license": "BSD",
+  "devDependencies": {
+    "mocha": "~1.7.4",
+    "should": "~1.2.1"
+  },
+  "dependencies": {
+    "underscore": "~1.4.3"
+  }
 }
