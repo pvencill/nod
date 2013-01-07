@@ -18,7 +18,7 @@ Arguments can be strings, numbers, or arrays.  Strings or numbers will be treate
 A wildcard string can be used as well to indicate 'all' in any position, but use this sparingly (see revoke).
 
 Note that all the parameters are pretty arbitrary; nod attaches no semantic meaning to your permission names, nor does it assume any kind of inheritance in this release.
-However, resources and permissions will be used as property keys in a javascript object (see getPermissions below), so they must be valid for use as object keys.  
+However, resources and permissions will be used as property keys in a javascript object (see getPermissions below), so they must be valid for use as object keys.
 
 ```javascript
 // assuming some object named article
@@ -46,11 +46,14 @@ nod.check(peter.roles, article.id, 'read');
 ```
 
 ### revoke
+_ revoke(subject, resource, permission) _
 
-If you later change your mind, you can always `revoke` permissions as well.
+If you later change your mind, you can always `revoke` permissions as well. As with `grant`, you can pass arrays instead of numbers or strings to revoke lists of things
 
 ```javascript
 nod.revoke('peter', article.id, 'read');
+nod.revoke('peter',article.id, ['read','write']);
+nod.revoke(['peter','stewie'], article.id, 'read');
 ```
 
 Note that wildcards must be revoked as a wildcard.  You cannot successfully grant with a wildcard and then revoke for something more specific:

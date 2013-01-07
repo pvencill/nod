@@ -83,6 +83,41 @@ describe('nod', function(){
 
       nod.revoke(subjectId, resource, 'read');
       nod.getPermissions()[resource].read.should.not.include(subjectId);
+    });
+
+    it('should remove permission from the resource for all subjects in an array', function(){
+      var resource = 'books';
+      var subjects = ['paul', 'john', 'bill'];
+      nod.grant(subjects,resource,'read');
+
+      nod.revoke(['john','bill'], resource, 'read');
+      nod.check('paul',resource, 'read').should.be.true;
+      nod.check(['john','bill'], resource,'read').should.be.false;
+    });
+
+    it('should remove permission from all resources in an array for the subject', function(){
+      var resources = ['books','audio', 'users'];
+      var subject = 'admins';
+      var permission = 'read';
+
+      nod.grant(subject,resources,permission);
+      nod.revoke(subject, ['books','audio'], permission);
+      nod.check(subject, 'users',permission).should.be.true;
+      nod.check(subject,'books', permission).should.be.false;
+      nod.check(subject,'audio', permission).should.be.false;
+    })
+
+    it('should remove all permissions from a resource for the subject', function(){
+      var resource = 'books';
+      var subject = 'admins';
+      var permissions = ['read','write','execute'];
+
+      nod.grant(subject,resource,permissions);
+      nod.revoke(subject, resource, ['write','execute']);
+
+      nod.check(subject,resource,'read').should.be.true;
+      nod.check(subject,resource,'write').should.be.false;
+      nod.check(subject,resource,'execute').should.be.false;
     })
   })
 
