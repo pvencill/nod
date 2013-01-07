@@ -1,4 +1,4 @@
-Boilerplate
+Nod
 =====
 
 Fast, generic, simple access control system for node.js.
