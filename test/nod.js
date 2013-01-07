@@ -7,7 +7,7 @@ describe('nod', function(){
       var subjectId = 1;
       nod.grant(subjectId,resource,'read');
 
-      nod.getPermissions()[resource].permissions['read'].should.include(subjectId);
+      nod.getPermissions()[resource]['read'].should.include(subjectId);
     })
   })
 
@@ -18,7 +18,7 @@ describe('nod', function(){
       nod.grant(subjectId, resource, 'read');
 
       nod.revoke(subjectId, resource, 'read');
-      nod.getPermissions()[resource].permissions.read.should.not.include(subjectId);
+      nod.getPermissions()[resource].read.should.not.include(subjectId);
     })
   })
 
@@ -62,7 +62,7 @@ describe('nod', function(){
 
   describe('setPermissions', function(){
     it('should allow a well formed permissions object to be injected', function(){
-      var perms = { obj1 : { permissions : { read : ['paul']}}};
+      var perms = { obj1 : { read : ['paul']}};
       nod.setPermissions(perms);
 
       nod.check('paul', 'obj1','read').should.be.true;

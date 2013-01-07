@@ -42,12 +42,12 @@ You can also view a copy of the permissions map through `getPermissions`
 ```javascript
 nod.grant('peter', '102029192', 'read');
 nod.getPermissions();
-// returns { '102029192' : { permissions : { read : ['peter'] }}}
+// returns { '102029192' : { read : ['peter'] }}
 ```
 
 And finally, you can set permissions as well
 
 ```javascript
-nod.setPermissions({'102029192' : { permissions : {read : ['peter','stewie']}}});
+nod.setPermissions({'102029192' : {read : ['peter','stewie']}});
 nod.check('stewie', '102029192', 'read'); // returns true
 ```
