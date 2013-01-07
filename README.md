@@ -10,13 +10,6 @@ Fast, generic, simple access control system for node.js.
 ## Quick start
 
 nod is used by consuming applications to manage a map of permissions that let you later check or enforce that certain subjects have permissions on specific objects.
-It does not try and enforce a particular storage paradigm on your application, nor does it presume anything about the hierarchy of your stuff.  You simply grant, revoke, check, or enforce as appropriate.
-
-#grant#
-_grant(subjectId, resourceId, permission)_
-```js
-var nod = require('nod');
-
 // assuming some object named article
 nod.grant('peter', article.id, 'read');
 ```

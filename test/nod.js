@@ -1,13 +1,77 @@
 var nod = require('../lib/nod');
 
 describe('nod', function(){
+  beforeEach(function(){
+    nod.setPermissions({}); // clear it
+  })
   describe('grant', function(){
     it('should add permissions to the resource for the subject', function(){
       var resource = 1;
       var subjectId = 1;
+
       nod.grant(subjectId,resource,'read');
 
       nod.getPermissions()[resource]['read'].should.include(subjectId);
+    });
+
+    it('should add permissions to the resource for an array of subjects', function(){
+      var resource = 'books';
+      var subjects = ['paul','erin','becca'];
+      nod.grant(subjects, resource, 'read');
+
+      nod.getPermissions()[resource]['read'].should.eql(subjects);
+    });
+
+    it('should add permissions to all resources in an array of resources for a subject', function(){
+      var resources = ['books/1', 'books/2', 'books/3'];
+      var subject = 'admin';
+
+      nod.grant(subject, resources, 'read');
+      resources.forEach(function(book){
+        nod.check(subject, book, 'read').should.be.true;
+      })
+    });
+
+    it('should add all permissions to a resource for a subject', function(){
+      var resource = 'users';
+      var subject = 'admin';
+      var permissions = ['read', 'write'];
+      nod.grant(subject, resource, permissions);
+
+      permissions.forEach(function(perm){
+        nod.check(subject,resource,perm).should.be.true;
+      })
+    })
+
+    it('should add all permissions to all resources for all subjects', function(){
+
+      var resources = ['admin', 'users'];
+      var subjects = ['products','news'];
+      var permissions = ['read', 'comment'];
+      nod.grant(subjects,resources,permissions);
+
+      resources.forEach(function(res){
+        permissions.forEach(function(perm){
+          subjects.forEach(function(sub){
+            nod.check(sub,res,perm).should.be.true;
+          })
+        })
+      })
+    });
+
+    it('should be able to grant to all subjects using a wildcard character', function(){
+      nod.grant('*', 'comments', 'read'); // everyone can read comments
+      nod.check('bob', 'comments', 'read').should.be.true;
+    });
+
+    it('should be able to grant a permission to a subject for all resources using a wildcard character', function(){
+      nod.grant('admin', '*', 'read'); //admin can read everything
+      nod.check('admin', 'books', 'read').should.be.true;
+    });
+
+    it('should be able to grant all permissions to a subject for a resource using a wildcard character', function(){
+      nod.grant('admin', 'users', '*'); // admin can do anything to users
+      nod.check('admin', 'users', 'read').should.be.true;
     })
   })
 
@@ -38,6 +102,15 @@ describe('nod', function(){
       nod.grant(subjectId, resource,'read');
 
       nod.check(subjectId, resource, 'write').should.be.false;
+    });
+
+    it('should be able to check an array of subjectIds to see if any of them match (e.g. roles)', function(){
+      var resource = 'articles';
+      var allowed = 'admin';
+      var roles = ['user','admin'];
+      nod.grant(allowed, resource, 'read'); // admin can do anything to articles
+
+      nod.check(roles, resource, 'read').should.be.true;
     })
   })
 
