@@ -12,7 +12,7 @@ Fast, generic, simple access control system for node.js.
 nod is used by consuming applications to manage a map of permissions that let you later check or enforce that certain subjects have permissions on specific objects.
 
 ### grant
-_ grant(subject, resource, permission) _
+_grant(subject, resource, permission)_
 
 Arguments can be strings, numbers, or arrays.  Strings or numbers will be treated as individual keys where arrays will be treated as a collection of keys to objects.
 A wildcard string can be used as well to indicate 'all' in any position, but use this sparingly (see revoke).
@@ -28,7 +28,8 @@ nod.grant('admins', 'users', '*'); // admins have all rights to affect users
 ```
 
 ### check or enforce
-_ check(subject, resource, permission) _
+_check(subject, resource, permission)_
+_enforce(subject, resource, permission)_
 
 `check` returns true if a subject has a permission on a given resource, and false if it does not.  You can also provide an array of subjects, in which case `check` returns true if *any* of the
 subjects have that permission on the resource.  This is mostly to allow easy checking of a user's roles against a resource.
@@ -46,7 +47,7 @@ nod.check(peter.roles, article.id, 'read');
 ```
 
 ### revoke
-_ revoke(subject, resource, permission) _
+_revoke(subject, resource, permission)_
 
 If you later change your mind, you can always `revoke` permissions as well. As with `grant`, you can pass arrays instead of numbers or strings to revoke lists of things
 
@@ -69,6 +70,7 @@ nod.revoke('*','articles','write');
 
 
 ### getPermissions
+_getPermissions()_
 
 You can also view a copy of the permissions map through `getPermissions`
 
@@ -79,6 +81,7 @@ nod.getPermissions();
 ```
 
 ### setPermissions
+_setPermissions(obj)_
 
 And finally, you can set permissions as well
 
@@ -86,6 +89,8 @@ And finally, you can set permissions as well
 nod.setPermissions({'102029192' : {read : ['peter','stewie']}});
 nod.check('stewie', '102029192', 'read'); // returns true
 ```
+
+Note that setting permissions this way should be done with caution as it just does a bulk overwrite of the current hash.
 
 ### Configuration
 
