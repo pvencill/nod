@@ -1,13 +1,28 @@
-{   "name": "nod"
-  , "description": "A CanCan-inspired resource authorization module"
-  , "version": "0.0.1"
-  , "author": "Paul Vencill <paul@cyberstride.net>"
-  , "dependencies": {
+{
+  "name": "nod",
+  "version": "0.1.1",
+  "description": "A simple, persistence-agnostic authorization system for node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test -r should -R spec"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:pvencill/nod.git"
+  },
+  "keywords": [
+    "node",
+    "authorization",
+    "access",
+    "control"
+  ],
+  "author": "Paul Vencill",
+  "license": "BSD",
+  "devDependencies": {
+    "mocha": "~1.7.4",
+    "should": "~1.2.1"
+  },
+  "dependencies": {
+    "underscore": "~1.4.3"
   }
-  , "devDependencies": {
-  }
-  , "keywords": ["node", "node.js", "access control", "resource"]
-  , "main": "index"
-  , "engines": { "node": ">= 0.4.7" }
 }
-
