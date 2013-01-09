@@ -11,7 +11,7 @@ describe('nod', function(){
 
       nod.grant(subjectId,resource,'read');
 
-      nod.getPermissions()[resource]['read'].should.include(subjectId);
+      nod.getPermissions()[resource]['read'][subjectId].should.be.true;
     });
 
     it('should add permissions to the resource for an array of subjects', function(){
@@ -19,7 +19,9 @@ describe('nod', function(){
       var subjects = ['paul','erin','becca'];
       nod.grant(subjects, resource, 'read');
 
-      nod.getPermissions()[resource]['read'].should.eql(subjects);
+      subjects.forEach(function(subj){
+        nod.getPermissions()[resource]['read'][subj].should.be.true;
+      })
     });
 
     it('should add permissions to all resources in an array of resources for a subject', function(){
@@ -72,6 +74,16 @@ describe('nod', function(){
     it('should be able to grant all permissions to a subject for a resource using a wildcard character', function(){
       nod.grant('admin', 'users', '*'); // admin can do anything to users
       nod.check('admin', 'users', 'read').should.be.true;
+    });
+
+    it('should grant to an object based on the default idField', function(){
+      nod.grant({name:'paul', _id:'1'}, 'books', 'read');
+      nod.check('1','books','read').should.be.true;
+    });
+
+    it('should grant for a resource based on the default idField', function(){
+      nod.grant('paul', {_id:1, title:'How the West Was Won'}, 'read');
+      nod.check('paul', 1, 'read').should.be.true;
     })
   })
 
@@ -82,7 +94,7 @@ describe('nod', function(){
       nod.grant(subjectId, resource, 'read');
 
       nod.revoke(subjectId, resource, 'read');
-      nod.getPermissions()[resource].read.should.not.include(subjectId);
+      nod.check(subjectId, resource,'read').should.be.false;
     });
 
     it('should remove permission from the resource for all subjects in an array', function(){
@@ -118,10 +130,20 @@ describe('nod', function(){
       nod.check(subject,resource,'read').should.be.true;
       nod.check(subject,resource,'write').should.be.false;
       nod.check(subject,resource,'execute').should.be.false;
+    });
+
+    it('should revoke based on the subject _id field if passed an object', function(){
+      nod.grant(1, 'books', 'read');
+      nod.revoke({_id:1, name:'paul'},'books','read');
+      nod.check(1,'books','read').should.be.false;
+    });
+
+    it('should revoke based on the object _id field if passed an object', function(){
+      nod.grant(1,'books','read');
+      nod.revoke(1,{_id:'books', sku:'1234567'}, 'read');
+      nod.check(1,'books','read').should.be.false;
     })
   })
-
-  // TODO: should grant and revoke operate on arrays of subjectIds or arrays of permissions or both?
 
   describe('check', function(){
     it('should return true if the subjectId has the permission', function(){
@@ -146,7 +168,22 @@ describe('nod', function(){
       nod.grant(allowed, resource, 'read'); // admin can do anything to articles
 
       nod.check(roles, resource, 'read').should.be.true;
+    });
+
+    it('should be able to check against an object as the subject using the default _id field', function(){
+      nod.grant(1,'books','read');
+      nod.check({_id:1, name:'paul'}, 'books', 'read').should.be.true;
     })
+
+    describe('when a condition function is provided', function(){
+      it('should run the condition instead of the native check function',function(){
+        var wasRun = false;
+        nod.grant(1,1,1, function(s,r,p){ wasRun = true; return true;});
+        nod.check(1,1,1).should.be.true;
+        wasRun.should.be.true;
+      });
+    })
+
   })
 
   describe('enforce', function(){
@@ -170,7 +207,7 @@ describe('nod', function(){
 
   describe('setPermissions', function(){
     it('should allow a well formed permissions object to be injected', function(){
-      var perms = { obj1 : { read : ['paul']}};
+      var perms = { obj1 : { read : {'paul' : true}}};
       nod.setPermissions(perms);
 
       nod.check('paul', 'obj1','read').should.be.true;
