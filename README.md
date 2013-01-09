@@ -12,19 +12,25 @@ Fast, generic, simple access control system for node.js.
 nod is used by consuming applications to manage a map of permissions that let you later check or enforce that certain subjects have permissions on specific objects.
 
 ### grant
-_grant(subject, resource, permission)_
+_grant(subject, resource, permission, [condition])_
 
-Arguments can be strings, numbers, or arrays.  Strings or numbers will be treated as individual keys where arrays will be treated as a collection of keys to objects.
+Subjects, resources, and permissions can be strings, numbers, objects or arrays.  Strings or numbers will be treated as individual keys where arrays will be treated as a collection of keys to objects.
+If an object is used, then it must have an id field defined (_id by default, but this can be set through configuration).
 A wildcard string can be used as well to indicate 'all' in any position, but use this sparingly (see revoke).
 
-Note that all the parameters are pretty arbitrary; nod attaches no semantic meaning to your permission names, nor does it assume any kind of inheritance in this release.
+Note that all the mandatory parameters are pretty arbitrary; nod attaches no semantic meaning to your permission names, nor does it assume any kind of inheritance in this release.
 However, resources and permissions will be used as property keys in a javascript object (see getPermissions below), so they must be valid for use as object keys.
+
+The one optional parameter, condition, is a function that will be called instead of the normal 'check' call when evaluating if a given subject has the specified rights.
+It has the same signature as check (subject, resource, permission) and should explicitly return true or false to indicate whether access should be granted or not.  Note,
+however that it still has to find the condition based on the first three params, so it may be useful to place it with wildcards (see example)
 
 ```javascript
 // assuming some object named article
 nod.grant('peter', article.id, 'read');   // peter can read the article with article.id
 nod.grant(['admins','users'], 'article', 'read'); // admins and users can read an article
 nod.grant('admins', 'users', '*'); // admins have all rights to affect users
+nod.grant('*', '*', 'read', function(s,r,p){ return /posts\/\d+/.test(r); }); // grants read rights to all users for all resources that pass the regex test
 ```
 
 ### check or enforce
@@ -77,7 +83,7 @@ You can also view a copy of the permissions map through `getPermissions`
 ```javascript
 nod.grant('peter', '102029192', 'read');
 nod.getPermissions();
-// returns { '102029192' : { read : ['peter'] }}
+// returns { '102029192' : { read : {peter : true }}}
 ```
 
 ### setPermissions
@@ -86,7 +92,7 @@ _setPermissions(obj)_
 And finally, you can set permissions as well
 
 ```javascript
-nod.setPermissions({'102029192' : {read : ['peter','stewie']}});
+nod.setPermissions({'102029192' : {read : {peter : true, stewie : true }}});
 nod.check('stewie', '102029192', 'read'); // returns true
 ```
 
