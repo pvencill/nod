@@ -48,7 +48,7 @@ You can, check peter's rights as follows:
 var peter = {_id : 'peter', roles : ['user', 'contributor']};
 nod.check(peter._id, article.id, 'read'); // returns true
 nod.check(peter._id, article.id, 'write'); // returns false
-nod.enforce(peter._id, article.id', write'); // throws an AccessDeniedError
+nod.enforce(peter._id, article.id, 'write'); // throws an AccessDeniedError
 nod.check(peter.roles, article.id, 'read');
 ```
 
@@ -67,7 +67,7 @@ Note that wildcards must be revoked as a wildcard.  You cannot successfully gran
 
 ```javascript
 nod.grant('*', 'articles', 'write');
-nod.revoke('peter', 'articles', write');
+nod.revoke('peter', 'articles', 'write');
 nod.check('peter','articles','write'); // returns true since the wildcard is still in place
 
 // you must remove the wildcard:
